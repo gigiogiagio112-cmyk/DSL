@@ -1,3 +1,9 @@
-ACCOUNTS { 
-    Cash: asset
-    }
+
+  OPEN 2024-01-01 {
+    Cash 10000.00
+    AccountsReceivable 2000.00
+    Inventory 3000.00
+    Loan -2000.00
+    OwnerCapital -7000.00
+    RetainedEarnings -9500.00
+  }

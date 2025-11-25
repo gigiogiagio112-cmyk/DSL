@@ -119,7 +119,7 @@ export function tokenizer(src: string): Token[]{
     }
 }
  return tokens
-
 }
+
 const test = fs.readFileSync("test.txt","utf-8");
 console.log(tokenizer(test))
