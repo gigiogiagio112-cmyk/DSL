@@ -80,24 +80,21 @@ export function tokenizer(src: string): Token[]{
     }
     else {
         if(isNum(code[0])){
-          let num = ""
-          let dot = false
-          while (code.length > 0 && isNum(code[0])!){
-            num += code.shift()!
-            if( num.length == 4 && code[0] == "-"  ){
-                 num+=code.shift()!
-                if(isNum(code[0]) && isNum(code[1])){
-                  let date = num +  code.shift()! + code.shift()!
-                  tokens.push(makeToken(TokenType.Date, date))
-                }
-            }   
-            else if(code[0] == "." && isNum(code[1])){
-              dot = true
+          let num = "";
+          let hasDot = false;
+          // Check for date (YYYY-MM-DD)
+          if (code.length >= 10 && isNum(code[0]) && isNum(code[1]) && isNum(code[2]) && isNum(code[3]) && code[4] == '-' && isNum(code[5]) && isNum(code[6]) && code[7] == '-' && isNum(code[8]) && isNum(code[9])) {
+            num = code.splice(0,10).join("");
+            tokens.push(makeToken(TokenType.Date, num));
+          } else {
+            while (code.length > 0 && (isNum(code[0]) || (code[0] === '.' && isNum(code[1])))) {
+              if (code[0] === '.') {
+                hasDot = true;
+              }
+              num += code.shift()!;
             }
-            num+=code.shift()!
-         }
-            tokens.push(makeToken(TokenType.Number,num))
-         
+            tokens.push(makeToken(TokenType.Number, num));
+          }
         }
         else if (isAlpha(code[0])){
           let ident = "";
