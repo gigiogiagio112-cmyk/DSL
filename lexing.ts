@@ -51,11 +51,12 @@ function makeToken(type: TokenType,value: string ): Token{
 export function tokenizer(src: string): Token[]{
     const code = src.split('')
     const tokens : Token[] = [];
-    while(code.length > 0 ){
+    while(code.length > 0){
     if(code[0] == ":"){
-     tokens.push( makeToken(TokenType.Colon, code.shift()! ))
+     tokens.push(makeToken(TokenType.Colon, code.shift()! ))
     }
     else if (code[0] == "-" && code[1] == ">" || code[0] == "<" && code[1] == "-" ){
+        code.shift()!
         tokens.push(makeToken(TokenType.Flow_Movement, code.shift()!))
     }
     else if(code[0] == "{"){
@@ -64,7 +65,18 @@ export function tokenizer(src: string): Token[]{
     else if(code[0] == "}"){
         tokens.push(makeToken(TokenType.CloseBrace, code.shift()!))
     }
-    
+    else if (code[0] == "+" || code[0] == "-"){
+       tokens.push(makeToken(TokenType.BinaryOp,code.shift()!))
+    }
+    else if(code[0] == "'" || code[0] == '"'){
+        let quoteType = code.shift()!;
+        let str = " ";
+        while(code.length > 0 && code[0] !== quoteType ){
+            str += code.shift()! ;
+        }
+        code.shift()!
+        tokens.push(makeToken(TokenType.String, str))
+    }
     else {
         if(isNum(code[0])){
           let num = " "
@@ -76,15 +88,15 @@ export function tokenizer(src: string): Token[]{
             }
             else if(code[0] == ","){
                 num += code.shift()!
-                
             }
-
           }
           if (date == num){
-            tokens.push(makeToken(TokenType.Date, code.shift()!))
+            tokens.push(makeToken(TokenType.Date, date))
+            
           }
           else {
-            tokens.push(makeToken(TokenType.Number, code.shift()!))
+            tokens.push(makeToken(TokenType.Number, num))
+            
           }
         }
         else if (isAlpha(code[0])){
@@ -94,10 +106,10 @@ export function tokenizer(src: string): Token[]{
           }
           const key = KEYWORDS[ident];
           if ( key == undefined){
-            tokens.push(makeToken(TokenType.Identifier, code.shift()!))
+            tokens.push(makeToken(TokenType.Identifier, ident))
           }
           else {
-            tokens.push(makeToken(key, code.shift()!))
+            tokens.push(makeToken(key, ident))
           }
         }
         else if (isSkippable(code[0])){
