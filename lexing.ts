@@ -81,22 +81,23 @@ export function tokenizer(src: string): Token[]{
     else {
         if(isNum(code[0])){
           let num = ""
-          
+          let dot = false
           while (code.length > 0 && isNum(code[0])!){
             num += code.shift()!
             if( num.length == 4 && code[0] == "-"  ){
                  num+=code.shift()!
                 if(isNum(code[0]) && isNum(code[1])){
-                  num += code.shift()! + code.shift()!
-                  tokens.push(makeToken(TokenType.Date, num))
+                  let date = num +  code.shift()! + code.shift()!
+                  tokens.push(makeToken(TokenType.Date, date))
                 }
+            }   
+            else if(code[0] == "." && isNum(code[1])){
+              dot = true
             }
-            else if(code[0] == "."){
-                num += code.shift()!
-                tokens.push(makeToken(TokenType.Number, num))
-            }
-          }  
-            
+            num+=code.shift()!
+         }
+            tokens.push(makeToken(TokenType.Number,num))
+         
         }
         else if (isAlpha(code[0])){
           let ident = "";
