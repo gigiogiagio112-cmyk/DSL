@@ -70,7 +70,7 @@ export function tokenizer(src: string): Token[]{
     else if (code[0] == "+" || code[0] == "-") {
   if (code[0] == "-" &&isNum(code[1])) {
     let num = code.shift()!; 
-    while (code.length > 0 && isNum(code[0])) {
+    while (code.length > 0 && isNum(code[0] )) {
       num += code.shift()!
     }
     tokens.push(makeToken(TokenType.Number, num));
