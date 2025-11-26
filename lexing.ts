@@ -42,6 +42,23 @@ function isNum(src: string){
     return c >= bound[0] && c <= bound[1]
 }
 
+function readNumber(code: string[]):string{
+  let num = ""
+  if (code[0]== "-" && isNum(code[1])){
+    num += code.shift()!
+  }
+   while(code.length > 0 && isNum(code[0])){
+    num += code.shift()!
+   }
+  
+  if(code[0] == "." && isNum(code[1])){
+    num+=code.shift()!
+    while (code.length > 0 && isNum(code[0])){
+     num+=code.shift()!
+    }
+  }
+  return num 
+}
 function isSkippable(src:string){
     return src == " " || src == "\r" || src == "\n" 
 }
@@ -68,18 +85,15 @@ export function tokenizer(src: string): Token[]{
         tokens.push(makeToken(TokenType.CloseBrace, code.shift()!))
     }
     else if (code[0] == "+" || code[0] == "-") {
-  if (code[0] == "-" &&isNum(code[1])) {
-    let num = code.shift()!; 
-    while (code.length > 0 && isNum(code[0] )) {
-      num += code.shift()!
-    }
-    tokens.push(makeToken(TokenType.Number, num));
-    continue; // Prevent falling through and infinite loop
-  } else {
-    tokens.push(makeToken(TokenType.BinaryOp, code.shift()!));
-    continue; // Always advance and prevent infinite loop
-    }
-  }
+    if (code[0] == "-" && isNum(code[1])) {
+        const num = readNumber(code)
+        tokens.push(makeToken(TokenType.Number, num));
+        continue
+      }
+     else {
+        tokens.push(makeToken(TokenType.BinaryOp, code.shift()!));
+        continue;
+    }}
     else if(code[0] == "'" || code[0] == '"'){
         let quoteType = code.shift()!;
         let str = "";
