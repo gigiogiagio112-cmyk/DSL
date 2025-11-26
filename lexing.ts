@@ -69,7 +69,7 @@ export function tokenizer(src: string): Token[]{
     }
     else if (code[0] == "+" || code[0] == "-") {
   if (code[0] == "-" &&isNum(code[1])) {
-    let num = code.shift()!; // consume '-'
+    let num = code.shift()!; 
     while (code.length > 0 && isNum(code[0])) {
       num += code.shift()!
     }
@@ -78,8 +78,8 @@ export function tokenizer(src: string): Token[]{
   } else {
     tokens.push(makeToken(TokenType.BinaryOp, code.shift()!));
     continue; // Always advance and prevent infinite loop
+    }
   }
-}
     else if(code[0] == "'" || code[0] == '"'){
         let quoteType = code.shift()!;
         let str = "";
@@ -114,8 +114,9 @@ export function tokenizer(src: string): Token[]{
             }
             tokens.push(makeToken(TokenType.Number, num));
           }
+        }
         
-         if (isAlpha(code[0])){
+        else if (isAlpha(code[0])){
           let ident = "";
           while (code.length > 0 && isAlpha(code[0])!){
             ident += code.shift();
@@ -125,16 +126,18 @@ export function tokenizer(src: string): Token[]{
           if ( key == undefined){
             tokens.push(makeToken(TokenType.Identifier, ident))
           }
-          else{
+          else {
             tokens.push(makeToken(key, ident))
         }
       }
         else if (isSkippable(code[0])){
             code.shift()!
-            continue
-      }
-      
+          
     }
+        else {
+          console.log("Unrecognized Character:",code[0])
+          code.shift()!
+        }
   }
 }
  tokens.push({type: TokenType.EOF, value: "End of file"})
