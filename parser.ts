@@ -1,15 +1,41 @@
 import { Program } from "./ast";
-import { Token, tokenizer } from "./lexing";
+import { Token, tokenizer, TokenType } from "./lexing";
 
 export default class Parser {
+    private tokens: Token[] = [];
+
+    private position : number = 0
+
     private peek(){
-       return this
-    }
-    private advance(){
-        return this.peek().shift()!
+       return this.tokens[this.position]
     }
 
-    private expect(){
+    private advance(){
+         const prev = this.tokens.shift() as Token
+         return prev 
+    }
+
+    private expect(token: TokenType, message: string):boolean{
+        if(this.peek().type !== token){
+            console.log(message)
+            return false
+        }
+        else return true
+    }
+
+    private match(token: TokenType):boolean{
+        if(this.peek().type !== token){
+            return false
+        }
+        else return true
+    }
+
+    private is_eof(){
+        if (this.peek().type === TokenType.EOF){
+            return true
+        }
+        
+        else return false
 
     }
 
