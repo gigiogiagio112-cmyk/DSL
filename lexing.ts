@@ -15,7 +15,11 @@ export enum TokenType {
     BinaryOp,
     Flow_Movement,
     Colon,
-    EOF
+    EOF,
+    asset,
+    liability,
+    revenue,
+    expense
 }
 
 export interface Token {
@@ -29,7 +33,11 @@ const KEYWORDS : Record<string,TokenType> = {
     "TXN": TokenType.Transaction,
     "OPEN": TokenType.Opening,
     "CLOSE": TokenType.Closing,
-    "REPORT": TokenType.REPORT
+    "REPORT": TokenType.REPORT,
+    "asset": TokenType.asset,
+    "liability": TokenType.liability,
+    "revenue": TokenType.revenue,
+    "expense": TokenType.expense
 }
 
 function isAlpha(src: string):boolean{
