@@ -1,4 +1,4 @@
-import { AccountBlock, OpeningBlock, Program, Stat, JournalBlock, Transaction, Account_Types } from "./ast";
+import { AccountBlock, OpeningBlock, Program, Stat, JournalBlock, Transaction, Account_Types, Movement } from "./ast";
 import { Token, tokenizer, TokenType } from "./lexing";
 
 export default class Parser {
@@ -80,8 +80,19 @@ export default class Parser {
 
     }
     private parseTransaction(): Transaction{
-
+        this.expect(TokenType.Transaction,"Expected 'TXN'");
+        const date = this.expect(TokenType.Date, "Expected a Date");
+        const name = this.expect(TokenType.String, "Expected a name in form of String type");
+        this.expect(TokenType.OpenBrace, "Expected '{'");
+        const flow = new Array<Movement>();
+        while(this.peek().type !== TokenType.CloseBrace ){
+            const movement = this.parseMovement();
+            flow.push(movement)
+        }
+        return {type: "Transaction", date: date.value, name: name.value, flow: flow} as Transaction
     }
+
+    private parseMovement(): Movement {}
     
     private parse_program(tokens: Token[]): Program{
         this.tokens = tokens;
