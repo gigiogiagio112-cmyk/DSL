@@ -1,7 +1,7 @@
 import { TokenType } from "./lexing"
 
 export type NodeType = "identifier"|"program" | "AccountBlock" | "OpeningBlock"| "Movement" | "JournalBlock" | "CloseBlock" | "ReportBlock" | "Transaction"
-export type Account_Types = "asset" | "liability" | "revenue" | "expense"
+export type Account_Types = "asset" | "liability" | "revenue" | "expense" | "equity"
 export type Flow_Movement = "->" | "<-"
 
 export interface Stat{

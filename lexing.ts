@@ -34,7 +34,8 @@ const KEYWORDS : Record<string,TokenType> = {
     "asset": TokenType.Account_Types,
     "liability": TokenType.Account_Types,
     "revenue": TokenType.Account_Types,
-    "expense": TokenType.Account_Types
+    "expense": TokenType.Account_Types,
+    "equity": TokenType.Account_Types
 }
 
 function isAlpha(src: string):boolean{
