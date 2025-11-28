@@ -52,7 +52,7 @@ var Parser = /** @class */ (function () {
         while (this.peek().type !== lexing_1.TokenType.CloseBrace) {
             var name_2 = this.expect(lexing_1.TokenType.Identifier, "Expected an Identifier").value;
             var number = parseFloat(this.expect(lexing_1.TokenType.Number, "Expected a Number").value);
-            balances[name_2.value] = number;
+            balances[name_2] = number;
         }
         this.expect(lexing_1.TokenType.CloseBrace, "Expected '}'");
         return { type: "OpeningBlock", date: date, balances: balances };

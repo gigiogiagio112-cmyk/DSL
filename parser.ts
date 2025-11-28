@@ -59,7 +59,7 @@ export default class Parser {
         while(this.peek().type !== TokenType.CloseBrace){
             const name = this.expect(TokenType.Identifier, "Expected an Identifier").value;
             const number = parseFloat(this.expect(TokenType.Number, "Expected a Number").value);
-            balances[name.value] = number
+            balances[name] = number
         }
         this.expect(TokenType.CloseBrace, "Expected '}'")
         return {type: "OpeningBlock", date: date, balances: balances} as OpeningBlock
