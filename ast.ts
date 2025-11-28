@@ -20,7 +20,7 @@ export interface AccountBlock extends Stat {
 export interface OpeningBlock extends Stat {
     type: "OpeningBlock",
     date: string,
-    balances: Record<string, number>
+    balances: Map<string, number>
 }
 
 export interface JournalBlock extends Stat {

@@ -51,7 +51,16 @@ export default class Parser {
     }
 
     private parseOpeningBlock() : OpeningBlock{
-
+        this.advance();
+        const date = this.expect(TokenType.Date, "Expected a Date type").value;
+        this.expect(TokenType.OpenBrace, "Expected '{'");
+        const balances = new Map<string, number>();
+        while(this.peek().type !== TokenType.CloseBrace){
+            const name = this.expect(TokenType.Identifier, "Expected an Identifier").value;
+            const number = this.expect(TokenType.Number, "Expected a Number").value;
+            balances.set(name,number)
+        }
+        return {type: "OpeningBlock", date: date, balances: balances} as OpeningBlock
     } 
 
     private parseJournalBlock(): JournalBlock{
