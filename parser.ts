@@ -92,7 +92,14 @@ export default class Parser {
         return {type: "Transaction", date: date.value, name: name.value, flow: flow} as Transaction
     }
 
-    private parseMovement(): Movement {}
+    private parseMovement(): Movement {
+        const nameI = this.expect(TokenType.Identifier, "Expected Identifier to name the account");
+        const flow = this.expect(TokenType.Flow_Movement, "Expected flow movement sign (i.e. : ->, <-)");
+        const nameII = this.expect(TokenType.Identifier, "Expected Identifier to name the account");
+        const amount = this.expect(TokenType.Number, "Expected number amount $$");
+        return {type: "Movement",account1: nameI.value, flow: flow.type, account2: nameII.value, amount: amount.value } as Movement
+
+    }
     
     private parse_program(tokens: Token[]): Program{
         this.tokens = tokens;
