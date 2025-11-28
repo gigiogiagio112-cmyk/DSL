@@ -1,7 +1,7 @@
 import { TokenType } from "./lexing"
 
-export type NodeType = "program" | "AccountBlock" | "OpeningBlock"| "Movement" | "JournalBlock" | "CloseBlock" | "ReportBlock" | "Transaction"
-export type AccountTypes= "asset" | "liability" | "revenue" | "expense" | "equity" 
+export type NodeType = "identifier"|"program" | "AccountBlock" | "OpeningBlock"| "Movement" | "JournalBlock" | "CloseBlock" | "ReportBlock" | "Transaction"
+export type Account_Types = "asset" | "liability" | "revenue" | "expense"
 
 export interface Stat{
     type: NodeType,
@@ -12,10 +12,9 @@ export interface Program {
    value: Stat[] 
 }
 
-
 export interface AccountBlock extends Stat {
     type: "AccountBlock",
-    accounts: Record<string, AccountBlock>
+    accounts: Map<string, Account_Types>
 }
 
 export interface OpeningBlock extends Stat {

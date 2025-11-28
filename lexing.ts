@@ -16,15 +16,12 @@ export enum TokenType {
     Flow_Movement,
     Colon,
     EOF,
-    asset,
-    liability,
-    revenue,
-    expense
+    Account_Types
 }
 
 export interface Token {
     type: TokenType,
-    value: string
+    value: any
 }
 
 const KEYWORDS : Record<string,TokenType> = {
@@ -34,10 +31,10 @@ const KEYWORDS : Record<string,TokenType> = {
     "OPEN": TokenType.Opening,
     "CLOSE": TokenType.Closing,
     "REPORT": TokenType.REPORT,
-    "asset": TokenType.asset,
-    "liability": TokenType.liability,
-    "revenue": TokenType.revenue,
-    "expense": TokenType.expense
+    "asset": TokenType.Account_Types,
+    "liability": TokenType.Account_Types,
+    "revenue": TokenType.Account_Types,
+    "expense": TokenType.Account_Types
 }
 
 function isAlpha(src: string):boolean{

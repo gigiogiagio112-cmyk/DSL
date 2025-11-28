@@ -1,4 +1,4 @@
-import { AccountBlock, OpeningBlock, Program, Stat, JournalBlock, Transaction,  } from "./ast";
+import { AccountBlock, OpeningBlock, Program, Stat, JournalBlock, Transaction, Account_Types } from "./ast";
 import { Token, tokenizer, TokenType } from "./lexing";
 
 export default class Parser {
@@ -37,7 +37,17 @@ export default class Parser {
     }
 
     private parseAccountBlock(): AccountBlock{
-
+        this.advance();
+        this.expect(TokenType.OpenBrace, "Accounts have to start with an '{'")
+        const accounts = new Map<string, Account_Types>() 
+        while(this.peek().type !== TokenType.CloseBrace ){
+            const name = this.expect(TokenType.Identifier, "Every account needs to be named");
+            this.expect(TokenType.Colon, "Expected character: ':'");
+            const type = this.expect(TokenType.Account_Types, "Expected character: Account type (i.e. : revenue, expense, liability, asset ...)" )
+            accounts.set(name.value,type.value)
+        }
+        this.expect(TokenType.CloseBrace, "Expected '}'")
+        return {type: "AccountBlock", accounts: accounts} as AccountBlock
     }
 
     private parseOpeningBlock() : OpeningBlock{
