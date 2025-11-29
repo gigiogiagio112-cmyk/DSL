@@ -45,6 +45,9 @@ class Interpreter {
      if(postings[0].amount !== postings[1].amount){
              throw new Error(`There's an inbalance between credits and debits in this transaction: ${console.log(ID)},${console.log(txn.name)}`)
      }
+     for (const posting of postings){
+        return this.post_to_ledger(posting.account,posting)
+     }
 
    }
 
@@ -81,6 +84,18 @@ class Interpreter {
         }
         return postings
         
+   }
+   
+   private post_to_ledger(account: string, ledger: Posting){
+    if(!this.ledger[account]){
+        const ledger = []
+        return []
+    }
+    if(!this.accountRegistry[account]){
+        throw new Error(`Account: ${console.log(account)} doesn't exist in Account Registry`)
+    }
+    return this.ledger[account] = ledger
+
    }
 
    public Interpret(program: Program){
