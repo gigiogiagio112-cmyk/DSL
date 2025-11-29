@@ -11,3 +11,12 @@ export interface LedgerMetadata {
     side: "debit" | "credit",
     amount: number
 }
+export interface Posting {
+    account: string,
+    side: "debit" | "credit",
+    amount: number, 
+    data: string,
+    ID: string,
+    description: string
+
+}

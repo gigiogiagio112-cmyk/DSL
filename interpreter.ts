@@ -1,5 +1,5 @@
 import { Account_Types, AccountBlock, JournalBlock, Movement, Program, Transaction } from "./ast"; 
-import { AccountMetaData, LedgerMetadata } from "./ds";
+import { AccountMetaData, LedgerMetadata, Posting } from "./ds";
 
 
 class Interpreter {
@@ -40,12 +40,46 @@ class Interpreter {
      let ID : string = `TXN-${console.log(this.txnCounter)}`;
      const postings = [] 
      for (const movement of txn.flow){
-        this.convert_movement_into_postings(movement, ID, txn.date, txn.name)
+        postings.push(...this.convert_movement_into_postings(movement, ID, txn.date, txn.name))
+     }
+     if(postings[0].amount !== postings[1].amount){
+             throw new Error(`There's an inbalance between credits and debits in this transaction: ${console.log(ID)},${console.log(txn.name)}`)
      }
 
    }
 
-   private convert_movement_into_postings(movement: Movement, ID: string, data: string, name: string){
+   private convert_movement_into_postings(movement: Movement, ID: string, data: string, description: string): Posting[]{
+    let postings = new Array<Posting>()
+        if(movement.flow == "->"){
+             postings =  [
+            { 
+                account: movement.account1,
+                side: "credit",
+                amount: movement.amount,
+                ID, data, description 
+            } as Posting ,
+            {
+                account: movement.account2,
+                side: "debit",
+                amount: movement.amount,
+                ID,data,description
+            } as Posting]
+        }
+        else if(movement.flow == "<-"){
+            postings  = [{ 
+                account: movement.account2,
+                side: "credit",
+                amount: movement.amount,
+                ID, data, description 
+            } as Posting  ,
+            {
+                account: movement.account1,
+                side: "debit",
+                amount: movement.amount,
+                ID,data,description
+            } as Posting]
+        }
+        return postings
         
    }
 
