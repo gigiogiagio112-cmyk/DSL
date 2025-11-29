@@ -1,4 +1,4 @@
-import { Account_Types, AccountBlock, JournalBlock, Program, Transaction } from "./ast"; 
+import { Account_Types, AccountBlock, JournalBlock, Movement, Program, Transaction } from "./ast"; 
 import { AccountMetaData, LedgerMetadata } from "./ds";
 
 
@@ -36,7 +36,17 @@ class Interpreter {
      if (txn.type !== "Transaction"){
         throw new Error(`The required type is: 'Transaction', yours is:${console.log(txn.type)}`)
      }
-     
+     this.txnCounter++;
+     let ID : string = `TXN-${console.log(this.txnCounter)}`;
+     const postings = [] 
+     for (const movement of txn.flow){
+        this.convert_movement_into_postings(movement, ID, txn.date, txn.name)
+     }
+
+   }
+
+   private convert_movement_into_postings(movement: Movement, ID: string, data: string, name: string){
+        
    }
 
    public Interpret(program: Program){
