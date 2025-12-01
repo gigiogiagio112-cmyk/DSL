@@ -1,5 +1,6 @@
+import { Runtime } from "inspector/promises";
 import { Account_Types, AccountBlock, JournalBlock, Movement, OpeningBlock, Program, Transaction } from "./ast"; 
-import { AccountMetaData, Posting } from "./ds";
+import { AccountMetaData, Posting, RuntimeVal } from "./ds";
 import Parser from "./parser"
 import fs = require('fs');
 
@@ -113,7 +114,7 @@ export default class Interpreter {
         switch(block.type){
 
             case "AccountBlock":
-                this.process_account_blocks(block as AccountBlock);
+                this.process_account_blocks(block as AccountBlock) ;
                  break
             case "JournalBlock":
                 this.process_journal_blok(block as JournalBlock);

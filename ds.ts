@@ -15,3 +15,4 @@ export interface Posting {
     description: string
 
 }
+
