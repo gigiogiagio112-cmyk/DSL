@@ -5,17 +5,12 @@ export interface AccountMetaData {
     isExplicit: boolean
 }
 
-export interface LedgerMetadata {
-    data: string,
-    description: string,
-    side: "debit" | "credit",
-    amount: number
-}
+
 export interface Posting {
     account: string,
     side: "debit" | "credit",
     amount: number, 
-    data: string,
+    date: string,
     ID: string,
     description: string
 

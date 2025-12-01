@@ -1,25 +1,20 @@
-import { Account_Types, AccountBlock, JournalBlock, Movement, Program, Transaction } from "./ast"; 
-import { AccountMetaData, LedgerMetadata, Posting } from "./ds";
+import { Account_Types, AccountBlock, JournalBlock, Movement, OpeningBlock, Program, Transaction } from "./ast"; 
+import { AccountMetaData, Posting } from "./ds";
 
 
 class Interpreter {
    private accountRegistry : Record<string, AccountMetaData> = {};
-   private ledger : Record<string, LedgerMetadata> = {};
+   private ledger : Record<string, Posting[]> = {};
    private txnCounter = 0
 
    private process_account_blocks(block: AccountBlock){
-      if(block.type !== "AccountBlock"){
-        throw new Error(`The required type is: 'AccountBlock', yours is:${console.log(block.type)}`)
-      }
-      if(block.accounts){
-        let name : string = "";
+      for(const account_name in block.accounts){
+        let name = block.accounts[account_name]
         let type = block.accounts[name] ; 
         const md = {type: type ,isExplicit: true}  as AccountMetaData
         return this.accountRegistry[name] = md 
       }
-      else{
-        throw new Error("We can're register an account block without accounts")
-      }
+      
    }
    
    private process_journal_blok(block: JournalBlock){
@@ -37,21 +32,38 @@ class Interpreter {
         throw new Error(`The required type is: 'Transaction', yours is:${console.log(txn.type)}`)
      }
      this.txnCounter++;
-     let ID : string = `TXN-${console.log(this.txnCounter)}`;
-     const postings = [] 
+     let ID : string = `TXN-${String(this.txnCounter)}`;
+     const postings = [] ;
      for (const movement of txn.flow){
         postings.push(...this.convert_movement_into_postings(movement, ID, txn.date, txn.name))
      }
-     if(postings[0].amount !== postings[1].amount){
-             throw new Error(`There's an inbalance between credits and debits in this transaction: ${console.log(ID)},${console.log(txn.name)}`)
-     }
+
+     let totalDebits = 0;
+     let totalCredits = 0;
+
      for (const posting of postings){
-        return this.post_to_ledger(posting.account,posting)
-     }
+
+        if(posting.side == "credit"){
+            totalCredits += posting.amount
+        }
+
+        else if(posting.side == "debit"){
+            totalDebits += posting.amount
+        }
+
+        if(Math.abs(totalCredits - totalDebits) > 0.01){
+            throw new Error ("Total amount of credits must be equal to total amount of debits and viceversa")
+        }
+        
+        else{
+             this.post_to_ledger(posting.account , posting) 
+            } 
+    }
+
 
    }
 
-   private convert_movement_into_postings(movement: Movement, ID: string, data: string, description: string): Posting[]{
+   private convert_movement_into_postings(movement: Movement, ID: string, date: string, description: string): Posting[]{
     let postings = new Array<Posting>()
         if(movement.flow == "->"){
              postings =  [
@@ -59,13 +71,13 @@ class Interpreter {
                 account: movement.account1,
                 side: "credit",
                 amount: movement.amount,
-                ID, data, description 
+                ID, date, description 
             } as Posting ,
             {
                 account: movement.account2,
                 side: "debit",
                 amount: movement.amount,
-                ID,data,description
+                ID,date,description
             } as Posting]
         }
         else if(movement.flow == "<-"){
@@ -73,28 +85,31 @@ class Interpreter {
                 account: movement.account2,
                 side: "credit",
                 amount: movement.amount,
-                ID, data, description 
+                ID, date, description 
             } as Posting  ,
             {
                 account: movement.account1,
                 side: "debit",
                 amount: movement.amount,
-                ID,data,description
+                ID,date,description
             } as Posting]
         }
         return postings
         
    }
    
-   private post_to_ledger(account: string, ledger: Posting){
-    if(!this.ledger[account]){
-        const ledger = []
-        return []
+   private post_to_ledger(account_name: string, posting: Posting){
+    if(!this.ledger[account_name]){
+        this.ledger[account_name] = []
     }
-    if(!this.accountRegistry[account]){
-        throw new Error(`Account: ${console.log(account)} doesn't exist in Account Registry`)
+    if(!this.accountRegistry[account_name]){
+        this.accountRegistry[account_name] = {isExplicit: false} as AccountMetaData
     }
-    return this.ledger[account] = ledger
+    this.ledger[account_name].push(posting)
+   }
+
+   private process_opening_blocks(block: OpeningBlock){
+     let ID : string = `OPEN-${String(this.txnCounter)}`
 
    }
 
@@ -104,9 +119,14 @@ class Interpreter {
         switch(block.type){
 
             case "AccountBlock":
-                return this.process_account_blocks(block as AccountBlock);
+                this.process_account_blocks(block as AccountBlock);
+                 break
             case "JournalBlock":
-                return this.process_journal_blok(block as JournalBlock)
+                this.process_journal_blok(block as JournalBlock);
+                break
+            case "OpeningBlock":
+                this.process_opening_blocks(block as OpeningBlock);
+                break
         }
       }
    }
