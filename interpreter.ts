@@ -10,10 +10,9 @@ export default class Interpreter {
 
    private process_account_blocks(block: AccountBlock){
       for(const account_name in block.accounts){
-        let name = block.accounts[account_name]
-        let type = block.accounts[name] ; 
+        let type = block.accounts[account_name] ;
         const md = {type: type ,isExplicit: true}  as AccountMetaData
-        return this.accountRegistry[name] = md 
+        return this.accountRegistry[account_name] = md 
       }
       
    }
@@ -29,9 +28,6 @@ export default class Interpreter {
    }
 
    private process_transaction(txn: Transaction){
-     if (txn.type !== "Transaction"){
-        throw new Error(`The required type is: 'Transaction', yours is:${console.log(txn.type)}`)
-     }
      this.txnCounter++;
      let ID : string = `TXN-${String(this.txnCounter)}`;
      const postings = [] ;
@@ -44,24 +40,21 @@ export default class Interpreter {
 
      for (const posting of postings){
 
-        if(posting.side == "credit"){
+        if(posting.side === "credit"){
             totalCredits += posting.amount
         }
 
-        else if(posting.side == "debit"){
+        else if(posting.side === "debit"){
             totalDebits += posting.amount
         }
-
+        }
         if(Math.abs(totalDebits - totalCredits) > 0.01){
             throw new Error (`Transaction ${ID} doesn't balance: debits=${totalDebits}, credits=${totalCredits}`)
         }
         
-        else{
+        for (const posting of postings){
              this.post_to_ledger(posting.account , posting) 
             } 
-    }
-
-
    }
 
    private convert_movement_into_postings(movement: Movement, ID: string, date: string, description: string): Posting[]{
@@ -104,7 +97,7 @@ export default class Interpreter {
         this.ledger[account_name] = []
     }
     if(!this.accountRegistry[account_name]){
-        this.accountRegistry[account_name] = {isExplicit: false} as AccountMetaData
+        this.accountRegistry[account_name] = {type: "unknown",isExplicit: false} as AccountMetaData
     }
     this.ledger[account_name].push(posting)
    }
