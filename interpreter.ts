@@ -52,8 +52,8 @@ export default class Interpreter {
             totalDebits += posting.amount
         }
 
-        if(Math.abs(totalCredits - totalDebits) > 0.01){
-            throw new Error ("Total amount of credits must be equal to total amount of debits and viceversa")
+        if(Math.abs(totalDebits - totalCredits) > 0.01){
+            throw new Error (`Transaction ${ID} doesn't balance: debits=${totalDebits}, credits=${totalCredits}`)
         }
         
         else{
