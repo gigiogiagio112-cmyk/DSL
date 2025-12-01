@@ -1,6 +1,6 @@
 import { Runtime } from "inspector/promises";
 import { Account_Types, AccountBlock, JournalBlock, Movement, OpeningBlock, Program, Transaction } from "./ast"; 
-import { AccountMetaData, Posting, RuntimeVal } from "./ds";
+import { AccountMetaData, Posting } from "./ds";
 import Parser from "./parser"
 import fs = require('fs');
 
@@ -12,8 +12,7 @@ export default class Interpreter {
    private process_account_blocks(block: AccountBlock){
       for(const account_name in block.accounts){
         let type = block.accounts[account_name] ;
-        const md = {type: type ,isExplicit: true}  as AccountMetaData
-        return this.accountRegistry[account_name] = md 
+        this.accountRegistry[account_name] = {type: type, isExplicit: true} as AccountMetaData
       }
       
    }
@@ -128,12 +127,47 @@ export default class Interpreter {
         }
       }
    }
+
+   public get_account_registry(): Record<string, AccountMetaData>{
+    return this.accountRegistry
+   }
+
+   public get_ledger(): Record<string, Posting[]>{
+    return this.ledger
+   }
+
+   public get_balance(account_name: string){
+    if(!this.ledger[account_name]){
+        return 0;
+    }
+
+    let balance = 0;
+
+    for(const posting of this.ledger[account_name]){
+        
+        if(posting.side = "credit"){
+            balance += posting.amount
+        }
+        
+        if(posting.side = "debit"){
+            balance -= posting.amount
+        }
+
+    }
+
+    return balance
+   }
+
 }
 
 const int = new Interpreter();
 const parser = new Parser();
 const test = fs.readFileSync("test.txt", "utf-8");
 const t = parser.ProduceAst(test);
-const result = int.Interpret(t)
-console.log(JSON.stringify(result, null, 2));
+int.Interpret(t)
+console.log("Account Registry:")
+console.log(JSON.stringify(int.get_account_registry(), null, 2));
+console.log("Ledger:")
+console.log(JSON.stringify(int.get_ledger(), null, 2))
+
 
