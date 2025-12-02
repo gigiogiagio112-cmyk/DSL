@@ -145,11 +145,11 @@ export default class Interpreter {
 
     for(const posting of this.ledger[account_name]){
         
-        if(posting.side = "credit"){
+        if(posting.side === "credit"){
             balance += posting.amount
         }
         
-        if(posting.side = "debit"){
+        if(posting.side === "debit"){
             balance -= posting.amount
         }
 
@@ -172,6 +172,6 @@ console.log("=====================")
 console.log("Ledger:")
 console.log("=====================")
 console.log(JSON.stringify(int.get_ledger(), null, 2))
-console.log("Balance for SalesRevenue")
+console.log("Balance for Cash")
 console.log("=====================")
-console.log(JSON.stringify(int.get_balance("SalesRevenue"),null,2))
+console.log(JSON.stringify(int.get_balance("Cash"),null,2))
