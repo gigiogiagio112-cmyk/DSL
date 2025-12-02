@@ -7,7 +7,8 @@ import fs = require('fs');
 export default class Interpreter {
    private accountRegistry : Record<string, AccountMetaData> = {};
    private ledger : Record<string, Posting[]> = {};
-   private txnCounter = 0
+   private openings : Record<string,Posting[]> = {};
+   private txnCounter = 0;
 
    private process_account_blocks(block: AccountBlock){
       for(const account_name in block.accounts){
@@ -107,32 +108,34 @@ export default class Interpreter {
    private process_opening_blocks(block: OpeningBlock){
      let ID : string = `OPEN-${String(this.txnCounter)}`;
      let amount = 0;
+     const postings = new Array<Posting>()
      
      for ( const account in block.balances){
         amount = block.balances[account];
         if( amount < 0 ){
-            return { 
+            postings.push({ 
                 account: account,
                 side: "debit",
                 amount: amount,
                 ID: ID,
                 date: block.date,
                 description: block.type
-            } as Posting  
+            } as Posting ) 
         }
 
         else if (amount > 0) {
             {
-                return { 
+                postings.push({ 
                 account: account,
                 side: "credit",
                 amount: amount,
                 ID: ID,
                 date: block.date,
                 description: block.type
-               } as Posting 
+               } as Posting)
            }
           }
+          this.openings[account] = postings
          }
         }
 
@@ -172,22 +175,31 @@ export default class Interpreter {
 
     let balance = 0;
 
-    for(const posting of this.ledger[account_name]){
-        const amount = 
+    for(const posting of this.ledger[account_name]){ 
+
+        
+       for(const opening_posting of this.openings[account_name]){
+
+        if (opening_posting.account == account_name && opening_posting.amount){
+          balance = opening_posting.amount
+        }
+
+       }
         if(posting.side === "credit"){
-            balance += posting.amount
+            balance += posting.amount 
             
 
         }
         
         if(posting.side === "debit"){
-            balance -= posting.amount
+            balance -= posting.amount 
         }
 
-    }
+    
 
     return balance
-   }
+    }
+}
 
 }
 
