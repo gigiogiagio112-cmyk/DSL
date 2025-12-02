@@ -91,6 +91,8 @@ export default class Interpreter {
         return postings
         
    }
+
+ 
    
    private post_to_ledger(account_name: string, posting: Posting){
     if(!this.ledger[account_name]){
@@ -103,8 +105,36 @@ export default class Interpreter {
    }
 
    private process_opening_blocks(block: OpeningBlock){
-     let ID : string = `OPEN-${String(this.txnCounter)}`
-   }
+     let ID : string = `OPEN-${String(this.txnCounter)}`;
+     let amount = 0;
+     
+     for ( const account in block.balances){
+        amount = block.balances[account];
+        if( amount < 0 ){
+            return { 
+                account: account,
+                side: "debit",
+                amount: amount,
+                ID: ID,
+                date: block.date,
+                description: block.type
+            } as Posting  
+        }
+
+        else if (amount > 0) {
+            {
+                return { 
+                account: account,
+                side: "credit",
+                amount: amount,
+                ID: ID,
+                date: block.date,
+                description: block.type
+               } as Posting 
+           }
+          }
+         }
+        }
 
    public Interpret(program: Program){
       for(const block of program.value){
