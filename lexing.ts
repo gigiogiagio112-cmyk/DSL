@@ -163,7 +163,3 @@ export function tokenizer(src: string): Token[]{
  tokens.push({type: TokenType.EOF, value: "End of file"})
  return tokens
 }
-
-
-//const test = fs.readFileSync("test.txt","utf-8");
-//console.log(tokenizer(test))
