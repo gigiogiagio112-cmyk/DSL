@@ -181,49 +181,40 @@ export default class Interpreter {
     }
 
     let balance = 0;
-
-    for(const posting of this.ledger[account_name]){ 
-        
-       for(const opening_name in this.openings[account_name]){
-        const opening_posting = this.openings[opening_name];
-        if (opening_posting.amount){
-          balance = opening_posting.amount
-        }
-
-       }
-        if(posting.side === "credit"){
-            balance += posting.amount 
-            
-
-        }
-        
-        if(posting.side === "debit"){
-            balance -= posting.amount 
-        }
-
+     
+    if(this.openings[account_name]){
+        balance = this.openings[account_name].amount
+    }
     
+    for(const posting of this.ledger[account_name]){
+       if(posting.side == "debit"){
+            balance -= posting.amount
+        }
 
+        else if(posting.side == "credit"){
+            balance += posting.amount
+        }
+       }
+    
     return balance
     }
-}
-
 }
 
 const int = new Interpreter();
 const parser = new Parser();
 const test = fs.readFileSync("test.txt", "utf-8");
 const t = parser.ProduceAst(test);
-int.Interpret(t)
-console.log("Account Registry:")
-console.log("=====================")
+int.Interpret(t);
+console.log("Account Registry:");
+console.log("=====================");
 console.log(JSON.stringify(int.get_account_registry(), null, 2));
-console.log("=====================")
-console.log("Ledger:")
-console.log("=====================")
-console.log(JSON.stringify(int.get_ledger(), null, 2))
-console.log("Openings Registry")
-console.log("=====================")
-console.log(JSON.stringify(int.get_openings(), null, 2))
-console.log("Balance for Cash")
-console.log("=====================")
-console.log(JSON.stringify(int.get_balance("Cash"),null,2))
+console.log("=====================");
+console.log("Ledger:");
+console.log("=====================");
+console.log(JSON.stringify(int.get_ledger(), null, 2));
+console.log("Openings Registry");
+console.log("=====================");
+console.log(JSON.stringify(int.get_openings(), null, 2));
+console.log("Balance for Cash");
+console.log("=====================");
+console.log(JSON.stringify(int.get_balance("Cash"),null,2));
