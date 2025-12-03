@@ -1,4 +1,4 @@
-import { AccountBlock, OpeningBlock, Program, Stat, JournalBlock, Transaction, Account_Types, Movement } from "./ast";
+import { AccountBlock, OpeningBlock, Program, Stat, JournalBlock, Transaction, Account_Types, Movement, CloseBlock } from "./ast";
 import { Token, tokenizer, TokenType } from "./lexing";
 import fs = require('fs');
 
@@ -82,6 +82,19 @@ export default class Parser {
         return {type: "JournalBlock", txns: txns} as JournalBlock
 
     }
+
+    private parseClosingBlock(): CloseBlock{
+        this.expect(TokenType.Closing, "Expected: 'CLOSE'");
+        const date = this.expect(TokenType.Date, "Expected a Date").value;
+        this.expect(TokenType.OpenBrace,"Expected: '{'")
+        const movements = new Array<Movement>();
+        while(this.peek().type !== TokenType.CloseBrace){
+            const movement = this.parseMovement();
+            movements.push(movement);
+        }
+        this.expect(TokenType.CloseBrace, "Expected: '}'");
+        return {type: "CloseBlock", date: date, movements: movements} as CloseBlock
+    }
     private parseTransaction(): Transaction{
         this.expect(TokenType.Transaction,"Expected 'TXN'");
         const date = this.expect(TokenType.Date, "Expected a Date");
@@ -121,6 +134,10 @@ export default class Parser {
             else if(this.match(TokenType.JOURNAL)){
                 const JournalBlock = this.parseJournalBlock();
                 body.push(JournalBlock);
+            }
+            else if(this.match(TokenType.Closing)){
+                const ClosingBlock = this.parseClosingBlock();
+                body.push(ClosingBlock)
             }
             else {
                 throw new Error(`Unrecognized Token could not be parsed: ${this.peek()}` );
