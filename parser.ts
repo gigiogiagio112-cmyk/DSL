@@ -1,4 +1,4 @@
-import { AccountBlock, OpeningBlock, Program, Stat, JournalBlock, Transaction, Account_Types, Movement, CloseBlock } from "./ast";
+import { AccountBlock, OpeningBlock, Program, Stat, JournalBlock, Transaction, Account_Types, Movement, CloseBlock, ReportBlock } from "./ast";
 import { Token, tokenizer, TokenType } from "./lexing";
 import fs = require('fs');
 
@@ -95,6 +95,12 @@ export default class Parser {
         this.expect(TokenType.CloseBrace, "Expected: '}'");
         return {type: "CloseBlock", date: date, movements: movements} as CloseBlock
     }
+
+    private parseReportBlock():ReportBlock {
+        this.expect(TokenType.REPORT, "Expected: 'REPORT' ");
+        
+    }
+
     private parseTransaction(): Transaction{
         this.expect(TokenType.Transaction,"Expected 'TXN'");
         const date = this.expect(TokenType.Date, "Expected a Date");
@@ -138,6 +144,10 @@ export default class Parser {
             else if(this.match(TokenType.Closing)){
                 const ClosingBlock = this.parseClosingBlock();
                 body.push(ClosingBlock)
+            }
+            else if(this.match(TokenType.REPORT)){
+                const ReportBlock = this.parseReportBlock();
+                body.push(ReportBlock)
             }
             else {
                 throw new Error(`Unrecognized Token could not be parsed: ${this.peek()}` );
