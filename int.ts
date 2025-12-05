@@ -238,7 +238,7 @@ export default class Interpreter {
                  this.process_report_block(block as ReportBlock);
                  return this.report;
             default:
-                throw new Error("The block type has not been recognized")
+                throw new Error(`The block type of ${console.log(block)} has not been recognized`)
                 
         }
       }

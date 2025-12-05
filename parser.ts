@@ -113,11 +113,13 @@ export default class Parser {
        
         const accounts = new Array<Account>()
         while(!this.is_eof() && this.match(TokenType.Identifier)){
-            if( this.peek().value == "ALL"){
-                const account = this.advance().value
+            if( this.advance().value == "ALL"){
+                const account = this.advance().value;
                 return {type: "Report", accounts: account} as ReportBlock
             }
+            else {
             accounts.push(...this.parseAccounts())
+            }
         }
        
         return {type: "Report", accounts: accounts} as ReportBlock
