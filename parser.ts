@@ -99,10 +99,10 @@ export default class Parser {
 
     private parseAccounts():Account[]{
        const accounts = new Array<Account>()
-       while(!this.match(TokenType.CloseBrace)){
-       if(this.peek().value == "string"){
-          accounts.push({type: "Account", value: this.peek().value} as Account)
-       } 
+       while(!this.is_eof()){
+        const account = this.advance().value;
+          accounts.push({type: "Account", value: account} as Account);
+       
        }
        return accounts
 
@@ -113,7 +113,7 @@ export default class Parser {
        
         const accounts = new Array<Account>()
         while(!this.is_eof() && this.match(TokenType.Identifier)){
-            if( this.peek().value == "ALL" && this.advance().type == TokenType.CloseBrace){
+            if( this.peek().value == "ALL"){
                 const account = this.advance().value
                 return {type: "Report", accounts: account} as ReportBlock
             }
