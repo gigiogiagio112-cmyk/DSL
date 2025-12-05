@@ -110,15 +110,15 @@ export default class Parser {
     private parseReport(): ReportBlock {
         this.expect(TokenType.REPORT, "Expected: 'REPORT'");
         this.expect(TokenType.Colon, "Expected: ':' ")
+        if( this.advance().type == TokenType.ALL){
+                return {type: "Report", all: true} as ReportBlock
+            }
        
         const accounts = new Array<Account>()
         while(!this.is_eof() && this.match(TokenType.Identifier)){
-            if( this.peek().type == TokenType.ALL){
-                return {type: "Report", all: true} as ReportBlock
-            }
-            else {
+
             accounts.push(...this.parseAccounts())
-            }
+            
         }
        
         return {type: "Report", accounts: accounts, all: false} as ReportBlock
