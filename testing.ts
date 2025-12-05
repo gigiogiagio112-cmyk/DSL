@@ -7,4 +7,4 @@ const int = new Interpreter();
 const parser = new Parser();
 const test = fs.readFileSync("test.txt", "utf-8");
 const t = parser.ProduceAst(test);
-console.log(int.Interpret(t));
+console.log(JSON.stringify(int.Interpret(t), null,2));
