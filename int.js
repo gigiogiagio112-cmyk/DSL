@@ -178,7 +178,7 @@ var Interpreter = /** @class */ (function () {
     };
     Interpreter.prototype.process_report_block = function (block) {
         console.log("REPORT");
-        if (block.all == true) {
+        if (block.all == true && !block.accounts) {
             for (var account_name in this.accountRegistry) {
                 this.report.push("BALANCE OF ACCOUNT: ".concat(account_name));
                 this.report.push(this.get_balance(account_name));
