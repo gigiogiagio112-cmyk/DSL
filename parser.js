@@ -96,13 +96,13 @@ var Parser = /** @class */ (function () {
         this.expect(lexing_1.TokenType.REPORT, "Expected: 'REPORT'");
         this.expect(lexing_1.TokenType.Colon, "Expected: ':' ");
         if (this.advance().type == lexing_1.TokenType.ALL) {
-            return { type: "Report", all: true };
+            return { type: "ReportBlock", all: true };
         }
         var accounts = new Array();
         while (!this.is_eof() && this.match(lexing_1.TokenType.Identifier)) {
             accounts.push.apply(accounts, this.parseAccounts());
         }
-        return { type: "Report", accounts: accounts, all: false };
+        return { type: "ReportBlock", accounts: accounts, all: false };
     };
     Parser.prototype.parseTransaction = function () {
         this.expect(lexing_1.TokenType.Transaction, "Expected 'TXN'");

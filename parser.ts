@@ -111,7 +111,7 @@ export default class Parser {
         this.expect(TokenType.REPORT, "Expected: 'REPORT'");
         this.expect(TokenType.Colon, "Expected: ':' ")
         if( this.advance().type == TokenType.ALL){
-                return {type: "Report", all: true} as ReportBlock
+                return {type: "ReportBlock", all: true} as ReportBlock
             }
        
         const accounts = new Array<Account>()
@@ -121,7 +121,7 @@ export default class Parser {
             
         }
        
-        return {type: "Report", accounts: accounts, all: false} as ReportBlock
+        return {type: "ReportBlock", accounts: accounts, all: false} as ReportBlock
     }
 
 
